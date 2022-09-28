@@ -1,6 +1,10 @@
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 public class Main{
     static Scanner scanner = new Scanner(System.in);
@@ -11,6 +15,8 @@ public class Main{
     static String initial_state = "";
     static String[] finale_states = {};
 
+    static List<List<Integer>> pairs = new ArrayList<>();
+
     static HashMap<String, List<Integer>> a = new HashMap<>();
     public static void main(String[] args) {
         Input();
@@ -19,7 +25,79 @@ public class Main{
         Index_List_init();
         Index_List_func();
         RecursiveStaff();
+        PairFinder();
+        TransitiveProperty();
         scanner.close();
+    }
+    public static void TransitiveProperty(){
+        int i = 0;
+        int j = 0;
+        boolean flag = true;
+        while (flag){
+            i = 0;
+            j = 0;
+            flag = false;
+            while (i < pairs.size()) {
+                j = 0;
+                System.out.print("\npairs on iter " + i + "\n" + pairs);
+                while(j < pairs.size()) {
+                    if (i != j && intersection(pairs.get(i), pairs.get(j)).size() > 0) {
+                        var temp1 = union(pairs.get(i), pairs.get(j));
+                        pairs.remove(i);
+                        if (i > j) {
+                            pairs.remove(j);
+                        } else {
+                            pairs.remove(j - 1);
+                        }
+                        pairs.add(temp1);
+                        flag = true;
+                    }
+                    j++;
+                }
+                i++;
+            }
+        }
+        System.out.print("\nNEW PAIRS:\n");
+        System.out.print(pairs);
+    }
+    public static void PairFinder(){
+        for(int i = 0; i < states.length-1; i++){
+            for(int j = 0; j < i+1; j++){
+                if(mat[i][j] == 0){
+                    var a = min(Integer.parseInt(states[i + 1]), Integer.parseInt(states[j]));
+                    var b = max(Integer.parseInt(states[i + 1]), Integer.parseInt(states[j]));
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(a);
+                    temp.add(b);
+                    pairs.add(temp);
+                }
+            }
+        }
+        //System.out.print(pairs);
+    }
+//    private static Set<Integer> intersection(List<Integer> a, List<Integer> b){
+//        Set<Integer> result = a.stream().distinct().filter(b::contains).collect(Collectors.toSet());
+//        return result;
+//    }
+    static public <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<T>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        return new ArrayList<T>(set);
+    }
+
+    static public <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
     }
     public static void RecursiveStaff(){
         boolean flag = true;
