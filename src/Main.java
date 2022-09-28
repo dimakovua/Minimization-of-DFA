@@ -11,13 +11,77 @@ public class Main{
     static String initial_state = "";
     static String[] finale_states = {};
 
-    static HashMap<String, String> a = new HashMap<>();
+    static HashMap<String, List<Integer>> a = new HashMap<>();
     public static void main(String[] args) {
         Input();
         Init_HashMap();
         Mat_Matrix_Innit();
         Index_List_init();
+        Index_List_func();
+        RecursiveStaff();
         scanner.close();
+    }
+    public static void RecursiveStaff(){
+        boolean flag = true;
+        while(flag){
+            boolean flag3 = true;
+            for(int i = 0; i < states.length-1; i++){
+                for(int j = 0; j < i+1; j++){
+                    if (mat[i][j] == 0){
+                        var r = states[i+1];
+                        var c = states[j];
+                        System.out.print("r:\n" + r + "\nc:\n"+c);
+                        int t = 0;
+                        boolean flag2 = true;
+                        while (t < alphabet.length && flag2){
+
+                            if(a.get(r).get(t) != a.get(c).get(t)){
+                                var r1 = Arrays.asList(states).indexOf(a.get(r).get(t)) - 1;
+                                var c1 = Arrays.asList(states).indexOf(a.get(c).get(t));
+                                if(c1 == states.length - 1 || mat[r1][c1] == -1 || r1 == -1 || c1 == -1){
+                                    var temp = c1;
+                                    c1 = r1 + 1;
+                                    r1 = temp - 1;
+                                }
+                                if(mat[r1][c1] == 1){
+                                    mat[i][j] = 1;
+                                    flag3 = false;
+                                    flag2 = false;
+                                }
+                            }
+                            t++;
+                        }
+                    }
+                }
+            }
+            if(flag3){
+                flag = false;
+            }
+        }
+        //PrintMat();
+    }
+    private static void PrintMat(){
+        System.out.print("\n");
+        for(int a = 0; a < states.length-1; a++) {
+            for (int b = 0; b < states.length - 1; b++) {
+                System.out.print(mat[a][b] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+    public static void Index_List_func(){
+        for (var i : index_list){
+            for (int j = 0; j < states.length-1; j++){
+                for (int k = 0; k < j+1; k++){
+                    if (i - 1 == j && !index_list.contains(k)){
+                        mat[j][k] = 1;
+                    } else if (i == k && !index_list.contains(j+1)) {
+                        mat[j][k] = 1;
+                    }
+                }
+            }
+        }
+        PrintMat();
     }
     public static void Index_List_init() {
         for(int i = 0; i < states.length; i++){
@@ -50,8 +114,12 @@ public class Main{
     }
     public static void Init_HashMap(){
         for (var ele : states){
-            a.put(ele, "");
+            List<Integer> aboba = new ArrayList<>();
+            a.put(ele, aboba);
+            //aboba.add(1);
         }
+        System.out.print("a:\n");
+        System.out.print(a);
         System.out.print("\nEnter transitions:\n");
         for (var ele : states){
             for (var alp : alphabet){
@@ -60,7 +128,7 @@ public class Main{
                 while(flag){
                     String b = scanner.nextLine();;
                     if (Arrays.asList(states).contains(b)){
-                        a.put(ele, b);
+                        a.get(ele).add(Integer.parseInt(b));
                         flag = false;
                     }
                     else{
